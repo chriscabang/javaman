@@ -11,4 +11,4 @@ Project Description: Time Tracking System is a computer application that allows 
 
 Date Started: January 7, 2019
 
-Date Expected To Be Realeased: January 26, 2019 (Ideal/Estimated completion)
+Date Expected To Be Realeased: January 26, 2019 (Ideal/Estimated date of completion)
