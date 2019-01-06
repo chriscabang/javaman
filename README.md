@@ -9,6 +9,6 @@ Team Members: Aviso, Vince Alvin ; Hyatt, Robert ; Perandos, Yeye Ryan ; Piloto,
 
 Project Description: Time Tracking System is a computer application that allows its users to record time spent on tasks or projects as well as the logging of time in and time out.
 
-Date Started: 1/7/2019
+Date Started: January 7, 2019
 
-Date Expected To Be Realeased: 1/26/19 (Ideal/Estimated completion)
+Date Expected To Be Realeased: January 26, 2019 (Ideal/Estimated completion)
