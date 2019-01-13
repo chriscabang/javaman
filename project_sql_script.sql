@@ -31,7 +31,7 @@ USE Records_DB;
  -- Insert dummy data into table
 INSERT INTO Accounts (ID, password) 
 VALUES 
-(902310,'02c8304104610b987415dc656a1a2308b1ca7be0')
+(902310,'8be3c943b1609fffbfc51aad666d0a04adf83c9d')
 ,(902311,'efe27c4ef866f91d1ce6f1a240e8137b368070f3')
 ,(902322,'b84689b769ab3d929f7cc14ee35e77c4ae6427c8');
 
