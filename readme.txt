@@ -37,5 +37,8 @@ Note: @src
   MySQL installer: 
      https://dev.mysql.com/downloads/installer/
 
+  .jar file link:
+   https://drive.google.com/open?id=1GgRToRryGG7jeBg9lAcc-VtJwrPisAo0
+
 ** For any other questions/inquiries etc. dont hesitate to 
    contact/msg me hehehehe

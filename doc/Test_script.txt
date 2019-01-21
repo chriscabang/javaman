@@ -15,6 +15,18 @@ Legend:
    -Create accounts .. .sql
      ER - Executes successfull without errors
 
+------------------------------------------------------------------------
+Notes:
+ - ensure that the .java files are all in the same folder
+ - the .jar is needed to connect the java to the java app
+   make sure it is in the same dir as the .java source files
+ - its the LoginTracker.java that contains the main method. Kana lng
+   i-parse. e.g. javac LoginTracker.java
+
+ - to run the app additional parameters are needed: 
+ 
+  full command: java -cp .;C:/Path_of_jar_file LoginTracker
+
 
 --------------------------------------
 @ App
@@ -89,6 +101,6 @@ Pre-requisites:
   - jar file at the same folder as the LoginTracker.java
   - environmental variables for java is set (eg. no errors
       when executing javac command)
-    
-Notes:
+
+
  links for mysql found at repository at hyatt-test branch.
