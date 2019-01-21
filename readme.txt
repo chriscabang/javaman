@@ -5,9 +5,8 @@ Note: @src
   -contains the SHA hash algorithm I used for hashing the password,
    name of file is AeSimpleSHA1.java
 
-  -contains the practice Login source code.
-  -contains the mysql-connector.jar file. This file is necessary to 
-   load the driver for DriverManager.
+  -contains the LoginTracker.java and other classes for the Login App.
+  -the LoginTracker.java contains the main() method.
 
      @sql script (project_sql)
   -contains the script used in creating the dummy database.
@@ -33,6 +32,10 @@ Note: @src
    SELECT User FROM mysql.user;
 
      -- there should be 'java' in the returned query table.
+
+ Links: 
+  MySQL installer: 
+     https://dev.mysql.com/downloads/installer/
 
 ** For any other questions/inquiries etc. dont hesitate to 
    contact/msg me hehehehe

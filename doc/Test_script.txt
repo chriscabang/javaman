@@ -1,0 +1,94 @@
+Things to test:
+
+disclaimer: wla ko nag Swing UI so expect console ra ni hahaha
+
+Legend:
+  ER - expected result
+  AR - actual result
+
+@ test
+  ideal - ER must be equal to AR
+
+@ Db
+1) Execute scripts in order
+   - project... .sql
+   -Create accounts .. .sql
+     ER - Executes successfull without errors
+
+
+--------------------------------------
+@ App
+
+1) Program
+    Action:
+      > Parse LoginTracker.java
+      	ER - Parse successfully without errors
+
+      > Run LoginTracker app with the parameters
+	ER - App launches without errors	
+
+2) LoginTracker
+     Action:
+       > Login app as employee / non-admin with
+         correct credentials
+        ER - Login should be successful
+           - new record log row should be created
+	   - the record logs are displayed
+           - prompt on next action displayed.
+
+       >> Delete a valid record (as employee)
+        ER - record successfully deleted
+           - should reflect in db as well
+           - there should be no errors prompted
+
+      >> Delete a null/invalid record (as employee)
+        ER - no data in db should be affected
+           - there should be a prompt about invalid record 	
+
+      >> Sign out (as employee)
+        ER - user should be signed out successfully
+           - there should be no errors
+           - time out column should be updated
+
+       >> Login with invalid credentials
+         ER - Login should fail
+            - There should be a prompt "Invalid Input"
+            - App should return to login in screen
+
+      > Login app as admin with correct credentials
+        ER - Login should succeed
+          - There should be prompt that admin is logged on
+          - new record log row should be created
+          - admin's record logs should be displayed
+          - no errors encountered
+
+        >> Delete valid record
+           ER - Record should be deleted (reflects in db)
+              - There should be no errors
+        
+        >> Delete invalid record
+          ER  - No changes must happen to db
+              - There should be a prompt regarding invalid 
+                input
+        >> View logged in users
+          ER - Users returned are users that actually logged-in
+              - There should be no errors
+
+        >> Sign out
+           ER - admin signs out successfully
+              -The admin's time log should be successfully 
+                updated
+              - No errors encountered      
+
+Notes: Wla pa ko nag-error handling sa wrong input sa choices
+ so medyo fragile ang code nko. Try lng sa ug input sa correct choices to test the following above. Thanks!
+
+
+Pre-requisites:
+  - Successful MySQL db installation
+  - jar file at the same folder as the LoginTracker.java
+  - environmental variables for java is set (eg. no errors
+      when executing javac command)
+    
+Notes:
+ links for mysql found at repository at hyatt-test branch.
