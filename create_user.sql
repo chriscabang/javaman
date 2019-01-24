@@ -11,4 +11,4 @@
 
 USE records_db;
 CREATE USER 'java'@'localhost' IDENTIFIED BY 'qwerty';
-GRANT ALL ON records_db.* TO 'java'@'localhost'
+GRANT ALL ON records_db.* TO 'java'@'localhost';
