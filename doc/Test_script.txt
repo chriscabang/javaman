@@ -91,6 +91,39 @@ Notes:
               -The admin's time log should be successfully 
                 updated
               - No errors encountered      
+         
+ -----------------------------------------------------------------
+  Update tests:
+       1) Create User (as admin)
+         Action:
+           > Login as admin and choose 5 (create user)
+             ER - Should prompt for credentials for new user
+                - No errors encountered
+
+           >> Create user using an available (untaken) ID
+            ER - User creation should be successful
+               - User's data should reflect in db.
+
+           >> Create user using already used/taken ID
+            ER - User creation must fail prompting taken ID
+
+        2) Delete User (admin)
+           Action:
+	    > Login as admin and choose 6 (delete user)
+             ER - Should prompt for user id to delete
+                - No errors encountered
+
+             >> Attempt deleting the admin (using id: 900000)
+                ER - delete should fail, prompting "Cannot delete admin!"
+
+             >>Attempt deleting a valid user (input an existing Id)
+                ER - delete should succeed, reflecting in db as well
+
+	     >>Attempt deleting a non-existant user
+                ER - delete should fail, prompting "No such Id" or
+                      the like.
+
+ 	              
 
 Notes: Wla pa ko nag-error handling sa wrong input sa choices
  so medyo fragile ang code nko. Try lng sa ug input sa correct choices to test the following above. Thanks!
