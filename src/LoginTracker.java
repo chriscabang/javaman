@@ -3,6 +3,8 @@ import java.sql.*;
 import java.util.Scanner;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.io.UnsupportedEncodingException; 
+import java.security.NoSuchAlgorithmException; 
 
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
@@ -191,7 +193,7 @@ public class LoginTracker {
 			while (!isSignedOut){
 				DisplayLogRecords(user,false);
 				//--------------------------------------------------------------------
-				System.out.println("Input 1: delete item/2: view logged-in employees/3: view logs of employees/4: sign-out"); 
+				System.out.println("Input 1: delete item /2: view logged-in employees/3: view logs of employees/4: sign-out \n/5: Create User /6:Delete User"); 
 				input = in.nextInt();	
 				in.nextLine();
 				
@@ -211,6 +213,12 @@ public class LoginTracker {
 						time = LocalTime.now();
 						stmt.executeUpdate("update accounts set Logged='F' where ID="+ user.GetId());
 						stmt.executeUpdate("update employee_log set TimeOut='"+ time +"'where Emp_Id="+ user.GetId()+ " and TimeIn='" + timeIn+"'");
+						break;
+					case 5:
+						AddAccount();
+						break;
+					case 6:
+						DeleteAccount();
 						break;
 					default:
 						System.out.println("\nInvalid!");
@@ -358,6 +366,168 @@ public class LoginTracker {
 		catch(Exception e){
 			System.out.println(e);
 		}
+		
+	}
+	
+	
+	// Add User account
+	public void AddAccount(){
+		Scanner in = new Scanner (System.in);
+		int inputUserId=0;
+		String inputUserPass;
+		String confirmPass;
+		
+		System.out.println("==== Add User====");
+		System.out.println("Acting as Admin");
+		
+		//Asks for credentials for the new user
+		System.out.println("Input User Id: ");
+		inputUserId = in.nextInt();
+		in.nextLine();
+		System.out.println("Input corresponding password: ");
+		inputUserPass = in.nextLine();
+		System.out.println("Re-input password: ");
+		confirmPass = in.nextLine();
+		
+		try {
+			//scans db if Id number already taken
+			rs = stmt.executeQuery("select * from accounts where ID=" + inputUserId );
+			
+			if (rs.next() == false){
+				//if new id input is available
+				//proceed to compare passwords
+				//Hash the inputted password using the algo and store it to itself
+				
+				inputUserPass = AeSimpleSHA1.SHA1(inputUserPass);
+				confirmPass = AeSimpleSHA1.SHA1(confirmPass);
+				
+				//compare passwords if match
+				if (inputUserPass.equals(confirmPass)){
+					//if true push to db
+					stmt.executeUpdate("insert into accounts (ID, password) values("+ inputUserId + ",'" + inputUserPass + "')");
+					System.out.println("User creation success!");
+					CreateUser(inputUserId);
+				}
+				else {
+					System.out.println("Passwords dont match! Try again!");
+				}
+			}
+			else {
+				System.out.println("Id already taken! Try again!");
+			}
+		}
+		catch (NoSuchAlgorithmException e){
+			System.out.println("Error with algo!");
+		}
+		catch (UnsupportedEncodingException e) {
+			System.out.println("Error with encoding!");
+		}
+		catch(Exception e){
+			System.out.println(e);
+		}
+		
+	}
+	
+	// Add Create user data
+	public void CreateUser(int userID){
+		
+		//variables:
+		String fName;
+		String lName;
+		String mName;
+		String gender;
+		String address;
+		String query;
+		int age;
+		
+		Scanner in = new Scanner (System.in);
+		
+		System.out.println("----Input user details----");
+		
+		//Create user object to represent the newly created user..
+		User newUser = new User();
+		
+		//set user's id
+		newUser.SetId(userID); 
+		
+		//input for new user's information
+		System.out.print("Input first name: ");
+		newUser.SetFirstName(in.nextLine());
+		
+		System.out.print("Input last name: ");
+		newUser.SetLastName(in.nextLine());
+		
+		System.out.print("Input middle name: ");
+		newUser.SetMiddleName(in.nextLine());
+		
+		System.out.print("Input gender(in one letter eg. 'M' or 'F'): ");
+		newUser.SetGender(in.nextLine());
+		
+		System.out.print("Input address: ");
+		newUser.SetAddress(in.nextLine());
+		
+		System.out.print("Input age: ");
+		newUser.SetAge(in.nextInt());
+		in.nextLine();
+		
+		//Push new data into the personal_info table
+		try {
+			query = "insert into personal_info (LastName, FirstName, MiddleName, Age, Gender, Address, Id)";
+			query += "values('" + newUser.GetLastName() + "','" + newUser.GetFirstName() + "','" + newUser.GetMiddleName() + "'," + newUser.GetAge() + ",'" + newUser.GetGender() + "','" + newUser.GetAddress() + "'," + newUser.GetId() + ")";
+			stmt.executeUpdate(query);
+			
+		}
+		catch (Exception e){
+			System.out.println(e);
+		}
+		
+	}
+	
+	//Delete User data
+	public void DeleteAccount() {
+		Scanner in = new Scanner (System.in);
+		int inputUserId=0;
+		boolean isNotAdminId = false;
+
+		
+		System.out.println("==== Delete User====");
+		System.out.println("Acting as Admin");
+		
+		//Asks for User id to delete
+		System.out.println("Input User Id to delete: ");
+		inputUserId = in.nextInt();
+		
+		//bans deleting the admin user
+		if (inputUserId == 900000){
+			System.out.println("Cannot delete admin!");
+			isNotAdminId = false;
+		}
+		else {
+			isNotAdminId = true;
+		}
+		
+		try {
+			//runs only if inputted id is not admin's
+			if (isNotAdminId == true){
+				//checks if such an id exists
+				rs = stmt.executeQuery("select * from accounts where ID=" + inputUserId );
+				if (rs.next() == false){
+					System.out.println("No such Id exists!");
+				}
+				else {
+					//deletes the employee_logs then personal_info,  then accounts table
+					stmt.executeUpdate("delete from employee_log where Emp_Id=" + inputUserId);
+					stmt.executeUpdate("delete from personal_info where Id=" + inputUserId);
+					stmt.executeUpdate("delete from accounts where ID=" + inputUserId);
+					
+					System.out.println("Delete Successful!");
+				}
+			}
+		}
+		catch (Exception e){
+			System.out.println(e);
+		}
+		
 		
 	}
 	
