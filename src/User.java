@@ -34,12 +34,12 @@ public class User {
 	
 	
 	//Methods mutators
-	public void SetId(){this.id = id;}
-	public void SetFirstName(){this.fname = fname;}
-	public void SetLastName() {this.lname = lname;}
-	public void SetMiddleName() {this.mname = mname;}
-	public void SetGender() {this.gender = gender;}
-	public void SetAge() {this.age = age;}
-	public void SetAddress() {this.address = address;}
+	public void SetId(int id){this.id = id;}
+	public void SetFirstName(String fname){this.fname = fname;}
+	public void SetLastName(String lname) {this.lname = lname;}
+	public void SetMiddleName(String mname) {this.mname = mname;}
+	public void SetGender(String gender) {this.gender = gender;}
+	public void SetAge(int age) {this.age = age;}
+	public void SetAddress(String address) {this.address = address;}
 	
 }
