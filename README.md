@@ -3,8 +3,10 @@
 </span>
 <h1 align="center">JavaMan</h1>
 <div>
-      JavaMan Repo: Java Learning Group
-      Project Name: Time Tracking System
+      <span>JavaMan Repo:</span> 
+      <i>Java Learning Group</i>
+      <span>Project Name:</span> 
+      <i>Time Tracking System</i>
 </div>
 <br/>
 <strong>Team Members:</strong> 
