@@ -5,6 +5,7 @@
 <div>
       <span>JavaMan Repo:</span> 
       <i>Java Learning Group</i>
+      <br/>
       <span>Project Name:</span> 
       <i>Time Tracking System</i>
 </div>
