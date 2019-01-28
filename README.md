@@ -4,6 +4,7 @@
       JavaMan Repo: Java Learning Group
       Project Name: Time Tracking System
 </div>
+<br/>
 <strong>Team Members:</strong> 
 <ul>
   <li>Aviso, Vince Alvin</li> 
