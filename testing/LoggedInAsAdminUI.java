@@ -7,7 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 public class LoggedInAsAdminUI extends JFrame implements ActionListener {
 
-	private JFrame frame;
+	public JFrame frame;
 	
 	//User id for reference:
 	int Id;
@@ -16,6 +16,7 @@ public class LoggedInAsAdminUI extends JFrame implements ActionListener {
 	
 	//flag
 	boolean changeView = false;
+	boolean atLog = false;
 	
 	//Model
 	DefaultListModel<String> listModel;
@@ -28,6 +29,8 @@ public class LoggedInAsAdminUI extends JFrame implements ActionListener {
 	JButton btnDelUser;
 	JButton btnCreateUser;
 	JButton btnShowEmployeeLog;
+	JButton btnDelLog;
+	JButton btnLogOut;
 	
 	
 	//ScrollPane
@@ -96,20 +99,20 @@ public class LoggedInAsAdminUI extends JFrame implements ActionListener {
 		
 		btnViewLog = new JButton("View Logged Users");
 		btnViewLog.setFont(new Font("Arial", Font.PLAIN, 11));
-		//btnViewLog.addActionListener();
+		btnViewLog.addActionListener(this);
 		btnViewLog.setBounds(428, 201, 138, 23);
 		frame.getContentPane().add(btnViewLog);
 		
 		btnDelUser = new JButton("Delete User");
 		btnDelUser.setFont(new Font("Arial", Font.PLAIN, 11));
-		//btnDelUser.addActionListener();
+		btnDelUser.addActionListener(this);
 		btnDelUser.setBounds(222, 201, 116, 23);
 		frame.getContentPane().add(btnDelUser);
 		
 		btnCreateUser = new JButton("Create User");
 		btnCreateUser.setBounds(26, 201, 98, 23);
 		btnCreateUser.setFont(new Font("Arial", Font.PLAIN, 11));
-		//btnCreateUser.addActionListener();
+		btnCreateUser.addActionListener(this);
 		frame.getContentPane().add(btnCreateUser);
 		
 		//Draw the scrollpane with the list
@@ -133,16 +136,16 @@ public class LoggedInAsAdminUI extends JFrame implements ActionListener {
 		btnShowEmployeeLog.setBounds(24, 456, 197, 23);
 		frame.getContentPane().add(btnShowEmployeeLog);
 		
-		JButton btnDelLog = new JButton("Delete Log");
+		btnDelLog = new JButton("Delete Log");
 		btnDelLog.setFont(new Font("Arial", Font.PLAIN, 11));
-		//btnDelLog.addActionListener();
+		btnDelLog.addActionListener(this);
 		btnDelLog.setBounds(458, 456, 108, 23);
 		frame.getContentPane().add(btnDelLog);
 		
 		JLabel timeLabel = new JLabel("Date and Time");
 		timeLabel.setFont(new Font("Malgun Gothic", Font.PLAIN, 12));
-		timeLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-		timeLabel.setBounds(369, 13, 197, 14);
+		timeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		timeLabel.setBounds(195, 11, 197, 14);
 		frame.getContentPane().add(timeLabel);
 		
 		JLabel txtName = new JLabel();
@@ -169,6 +172,11 @@ public class LoggedInAsAdminUI extends JFrame implements ActionListener {
 		txtAddress.setFont(new Font("Malgun Gothic", Font.PLAIN, 11));
 		txtAddress.setBounds(92, 144, 360, 19);
 		frame.getContentPane().add(txtAddress);
+		
+		btnLogOut = new JButton("Log Out");
+		btnLogOut.addActionListener(this);
+		btnLogOut.setBounds(475, 9, 91, 23);
+		frame.getContentPane().add(btnLogOut);
 		
 		final SimpleDateFormat timeFormat = new SimpleDateFormat("MMMM/dd/YYYY  HH:mm:ss a");
         ActionListener timerListener = new ActionListener() {
@@ -208,6 +216,19 @@ public class LoggedInAsAdminUI extends JFrame implements ActionListener {
 		
 	}
 	
+	//overloaded DrawList func
+	public void DrawList(){
+		//tracker object
+		LoginTracker tracker = new LoginTracker();
+		scrollPane.setBounds(26, 235, 541, 202);
+		
+		list = new JList<>(listModel);
+		scrollPane.setViewportView(list);
+		
+		//Scroll pane
+		frame.getContentPane().add(scrollPane);
+	}
+	
 	
 	
 	//actionPerformed
@@ -216,7 +237,7 @@ public class LoggedInAsAdminUI extends JFrame implements ActionListener {
 		JButton button = (JButton) event.getSource();
 		
 		if (button == btnShowEmployeeLog) {
-			System.out.println("Show events at triggered!");
+			atLog = true;
 			if (changeView == false) {
 				changeView = true;
 				btnShowEmployeeLog.setText("Show Only Admin Logs");
@@ -229,10 +250,48 @@ public class LoggedInAsAdminUI extends JFrame implements ActionListener {
 			//redraws the list DrawList method
 			DrawList(changeView);
 		}
+		else if (button == btnDelLog) {
+			int index = 0;
+			String logIdString;
+			index = list.getSelectedIndex();
+			
+			if (atLog == true){
+				if (index > 1 ) {
+					logIdString = (String)list.getSelectedValue();
+					logIdString = logIdString.split("\\|")[0];
+					logIdString = logIdString.trim();
+					System.out.println("i: " + index + ": " + logIdString);
+					
+					//call to db
+					tracker.DeleteLog(this.Id, logIdString);
+					listModel.removeElementAt(index);
+			
+				}
+			}
+			
+		}
+		else if (button == btnViewLog) {
+			atLog = false;
+			listModel = tracker.ViewLoggedUsers();
+			DrawList();
+		}
+		else if (button == btnCreateUser) {
+			CreateUserUI create = new CreateUserUI();
+			
+			//draw the create user UI
+			create.ShowCreateUserUI();			
+		}
+		else if (button == btnLogOut) {
+			tracker.SignOut(this.Id, this.timeIn);
+			//close frame
+			frame.dispose();
+		}
+		else if (button == btnDelUser) {
+			DeleteUserUI del = new DeleteUserUI();
+			del.ShowDeleteUserUI();
+		}
 		
 	}
-	
-
 	
 	//mutator
 	public void SetTimeIn (String timeIn) {

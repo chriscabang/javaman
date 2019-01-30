@@ -9,7 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 public class LoggedInAsUserUI extends JFrame implements ActionListener{
 	
-	private JFrame frame;
+	public JFrame frame;
 	
 	//User id for reference:
 	int Id;
@@ -175,13 +175,15 @@ public class LoggedInAsUserUI extends JFrame implements ActionListener{
 	 
 		if (button == btnViewLog) {
 			tracker.SignOut(this.Id, this.timeIn);
+			//close frame
+			frame.dispose();
 		}
 		else if (button == btnDelLog) {
 			int index = 0;
 			String logIdString;
 			index = recordLogList.getSelectedIndex();
 			
-			if (index > -1 ){
+			if (index > 1 ){
 				logIdString = (String)recordLogList.getSelectedValue();
 				logIdString = logIdString.split("\\|")[0];
 				logIdString = logIdString.trim();
@@ -189,7 +191,7 @@ public class LoggedInAsUserUI extends JFrame implements ActionListener{
 				
 				//call to db
 				recordLogModel.removeElementAt(index);
-				tracker.DeleteLog(this.Id, logIdString, false);
+				tracker.DeleteLog(this.Id, logIdString);
 			
 			}
 		}

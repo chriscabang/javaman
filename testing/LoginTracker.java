@@ -1,6 +1,7 @@
 
 import java.sql.*;
 import java.util.Scanner;
+import java.util.ArrayList;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.io.UnsupportedEncodingException; 
@@ -258,26 +259,43 @@ public class LoginTracker {
 		}
 	}
 	
-	public void ViewLoggedUsers(){
+	public DefaultListModel<String> ViewLoggedUsers(){
+		
+		//The con object
+		MySqlConnection newCon = new MySqlConnection();
+		
+		//Model to pass to the JFrame
+		DefaultListModel<String> loggedUsersModel = new DefaultListModel<>();
+		
+		//establish conn to fetch data
+		con = newCon.ConnectToDB();
 		try {
 			stmt = con.createStatement();
 			rs = stmt.executeQuery("select accounts.ID, LastName, FirstName from accounts JOIN personal_info ON accounts.ID = personal_info.Id WHERE logged='T'");
+			loggedUsersModel.addElement("Employee Id | Employee Name");
+			loggedUsersModel.addElement("***************************");
 			while (rs.next()){
 				int emp_id = rs.getInt("ID");
 				String fname = rs.getString("FirstName");
 				String lname = rs.getString("LastName");
-				System.out.println("--");
-				System.out.println(emp_id +" || " + lname + ", " + fname);
+				loggedUsersModel.addElement(emp_id +" | " + lname + ", " + fname);
 			}
-			Scanner in = new Scanner (System.in);
-			//this is just to pause the screen a bit
-			int inputLogId = in.nextInt();	
-			in.nextLine();
 		}
 		catch (Exception e){
 			System.out.println(e);
 		}
+		finally {
+			try {
+				con.close();
+				stmt.close();
+				rs.close();
+			}
+			catch (Exception e){
+				System.out.print(e);
+			}
+		}
 		
+		return loggedUsersModel;
 	}
 	
 	public void SignOut(int Id, String timeIn) {
@@ -294,11 +312,13 @@ public class LoginTracker {
 			stmt.executeUpdate("update accounts set Logged='F' where ID="+ Id);
 			System.out.println(timeIn);
 			stmt.executeUpdate("update employee_log set TimeOut='"+ time +"'where Emp_Id="+ Id + " and TimeIn='" + timeIn+"'");
+			System.out.println("Log out successful!");
 		}
 		catch(Exception e){
 			System.out.println(e);
 		}
 		finally {
+			
 			try {
 				con.close();
 				stmt.close();
@@ -308,6 +328,44 @@ public class LoginTracker {
 			}
 		}
 		
+	}
+	
+	public ArrayList GetIdList(){
+		ArrayList<String> list = new ArrayList<String>(1);
+		
+		//The con object
+		MySqlConnection newCon = new MySqlConnection();
+		
+		//establish conn to fetch data
+		con = newCon.ConnectToDB();
+		
+		try {
+			stmt = con.createStatement();
+			rs = stmt.executeQuery("select ID from accounts where ID <> 900000");
+			
+			while (rs.next()){
+				//retrieves the data from Id column as java string types
+					list.add(rs.getString("ID"));
+			}
+			
+		}
+		catch (Exception e){
+			System.out.println("Exception at Display logs" + e);
+		}
+		finally {
+			
+			try {
+				con.close();
+				stmt.close();
+				rs.close();
+			}
+			catch (Exception e){
+				System.out.print(e);
+			}
+		}
+		
+		//return
+		return list;	
 	}
 	
 	public DefaultListModel<String> DisplayLogRecords (int Id, boolean allEmployees){
@@ -329,6 +387,10 @@ public class LoginTracker {
 			stmt = con.createStatement();
 			
 			if (allEmployees == true){
+				//adds "Label to the JList"
+				recordLogModel.addElement("LogID | Employee Id | Date | Time-In | Time-Out");
+				recordLogModel.addElement("***********************************************");
+				
 				rs = stmt.executeQuery("select * from employee_log");
 				while (rs.next()){
 				   int id = rs.getInt("LogId");
@@ -336,7 +398,7 @@ public class LoginTracker {
 				   String date = rs.getString("Date");
 				   String TimeIn = rs.getString("TimeIn");
 				   String TimeOut = rs.getString("TimeOut");
-				   recordLogModel.addElement(id +" | " + date + " | " + TimeIn + " | " + TimeOut);
+				   recordLogModel.addElement(id +" | " + emp_id + " | " + date + " | " + TimeIn + " | " + TimeOut);
 				}
 				
 				// //Prompt on whether to delete a log
@@ -354,8 +416,6 @@ public class LoginTracker {
 						// System.out.println("Invalid!");
 					
 				// }
-		
-				
 			}
 			else {
 				System.out.println("---Personal Info----");
@@ -363,7 +423,11 @@ public class LoginTracker {
 			//--------------------------------------------------------------------
 				rs = stmt.executeQuery("select * from employee_log where Emp_Id=" +  Id);
 				System.out.println("---Record info----");
-			
+				
+				//adds "Label to the JList"
+				recordLogModel.addElement("LogID | Date | Time-In | Time-Out");
+				recordLogModel.addElement("**********************************");
+				
 				while (rs.next()){
 				   int id = rs.getInt("LogId");
 				   String date = rs.getString("Date");
@@ -377,15 +441,23 @@ public class LoginTracker {
 		catch (Exception e){
 			System.out.println("Exception at Display logs" + e);
 		}
+		finally {
+			
+			try {
+				con.close();
+				stmt.close();
+				rs.close();
+			}
+			catch (Exception e){
+				System.out.print(e);
+			}
+		}
 		
 		//Return model for the UI view
 			return recordLogModel;	
 	}
 	
-	public void DeleteLog(int Id, String inputLogId, boolean allEmployees){
-		
-		//Variables
-		boolean validRecord = false;
+	public void DeleteLog(int Id, String inputLogId){
 		
 		System.out.println("==== Delete Record ====");
 		System.out.println("Acting as ID: " + Id);
@@ -397,23 +469,8 @@ public class LoginTracker {
 		con = newCon.ConnectToDB();	
 			
 		try {
-			
 			stmt = con.createStatement();
-			
-			if (allEmployees == true){
-				rs = stmt.executeQuery("select * from employee_log where LogId=" + inputLogId );
-			}
-			else {
-				rs = stmt.executeQuery("select * from employee_log where LogId=" + inputLogId + " and Emp_Id=" + Id);
-			}
-			
-			//checks if there is such a log record
-			if (rs.next() == false) {
-				System.out.println("No such record!");
-			}else { 
-				stmt.executeUpdate("delete from employee_log where LogId=" + inputLogId);
-			}
-						
+			stmt.executeUpdate("delete from employee_log where LogId=" + inputLogId);			
 		}
 		catch(Exception e){
 			System.out.println(e);
@@ -432,27 +489,22 @@ public class LoginTracker {
 	
 	
 	// Add User account
-	public void AddAccount(){
+	public void AddAccount(User user, String inputUserPass, String confirmPass){
 		Scanner in = new Scanner (System.in);
-		int inputUserId=0;
-		String inputUserPass;
-		String confirmPass;
 		
 		System.out.println("==== Add User====");
 		System.out.println("Acting as Admin");
 		
-		//Asks for credentials for the new user
-		System.out.println("Input User Id: ");
-		inputUserId = in.nextInt();
-		in.nextLine();
-		System.out.println("Input corresponding password: ");
-		inputUserPass = in.nextLine();
-		System.out.println("Re-input password: ");
-		confirmPass = in.nextLine();
+		//The con object
+		MySqlConnection newCon = new MySqlConnection();
+		
+		//establish conn to fetch data
+		con = newCon.ConnectToDB();	
 		
 		try {
+			stmt = con.createStatement();
 			//scans db if Id number already taken
-			rs = stmt.executeQuery("select * from accounts where ID=" + inputUserId );
+			rs = stmt.executeQuery("select * from accounts where ID=" + user.GetId());
 			
 			if (rs.next() == false){
 				//if new id input is available
@@ -465,9 +517,9 @@ public class LoginTracker {
 				//compare passwords if match
 				if (inputUserPass.equals(confirmPass)){
 					//if true push to db
-					stmt.executeUpdate("insert into accounts (ID, password) values("+ inputUserId + ",'" + inputUserPass + "')");
+					stmt.executeUpdate("insert into accounts (ID, password) values("+ user.GetId() + ",'" + inputUserPass + "')");
 					System.out.println("User creation success!");
-					CreateUser(inputUserId);
+					CreateUser(user);
 				}
 				else {
 					System.out.println("Passwords dont match! Try again!");
@@ -486,103 +538,75 @@ public class LoginTracker {
 		catch(Exception e){
 			System.out.println(e);
 		}
-		
+		finally{
+			try {
+				con.close();
+				stmt.close();
+				rs.close();
+			}
+			catch (Exception e){
+				System.out.print(e);
+			}
+		}
 	}
 	
 	// Add Create user data
-	public void CreateUser(int userID){
+	public void CreateUser(User newUser){
 		
-		//variables:
-		String fName;
-		String lName;
-		String mName;
-		String gender;
-		String address;
+		//Variables
 		String query;
-		int age;
 		
-		Scanner in = new Scanner (System.in);
+		//The con object
+		MySqlConnection newCon = new MySqlConnection();
 		
-		System.out.println("----Input user details----");
-		
-		//Create user object to represent the newly created user..
-		User newUser = new User();
-		
-		//set user's id
-		newUser.SetId(userID); 
-		
-		//input for new user's information
-		System.out.print("Input first name: ");
-		newUser.SetFirstName(in.nextLine());
-		
-		System.out.print("Input last name: ");
-		newUser.SetLastName(in.nextLine());
-		
-		System.out.print("Input middle name: ");
-		newUser.SetMiddleName(in.nextLine());
-		
-		System.out.print("Input gender(in one letter eg. 'M' or 'F'): ");
-		newUser.SetGender(in.nextLine());
-		
-		System.out.print("Input address: ");
-		newUser.SetAddress(in.nextLine());
-		
-		System.out.print("Input age: ");
-		newUser.SetAge(in.nextInt());
-		in.nextLine();
+		//establish conn to fetch data
+		con = newCon.ConnectToDB();	
 		
 		//Push new data into the personal_info table
 		try {
+			stmt = con.createStatement();
 			query = "insert into personal_info (LastName, FirstName, MiddleName, Age, Gender, Address, Id)";
 			query += "values('" + newUser.GetLastName() + "','" + newUser.GetFirstName() + "','" + newUser.GetMiddleName() + "'," + newUser.GetAge() + ",'" + newUser.GetGender() + "','" + newUser.GetAddress() + "'," + newUser.GetId() + ")";
 			stmt.executeUpdate(query);
-			
+			System.out.println("Create User successful!");
 		}
 		catch (Exception e){
 			System.out.println(e);
 		}
-		
+		finally{
+			try {
+				con.close();
+				stmt.close();
+			}
+			catch (Exception e){
+				System.out.print(e);
+			}
+		}
 	}
 	
 	//Delete User data
-	public void DeleteAccount() {
-		Scanner in = new Scanner (System.in);
-		int inputUserId=0;
-		boolean isNotAdminId = false;
-
-		
+	public void DeleteAccount(String IdString) {
 		System.out.println("==== Delete User====");
 		System.out.println("Acting as Admin");
 		
+		//The con object
+		MySqlConnection newCon = new MySqlConnection();
+		
+		//establish conn to fetch data
+		con = newCon.ConnectToDB();	
+		
 		//Asks for User id to delete
-		System.out.println("Input User Id to delete: ");
-		inputUserId = in.nextInt();
-		
-		//bans deleting the admin user
-		if (inputUserId == 900000){
-			System.out.println("Cannot delete admin!");
-			isNotAdminId = false;
-		}
-		else {
-			isNotAdminId = true;
-		}
-		
 		try {
 			//runs only if inputted id is not admin's
-			if (isNotAdminId == true){
-				//checks if such an id exists
-				rs = stmt.executeQuery("select * from accounts where ID=" + inputUserId );
-				if (rs.next() == false){
-					System.out.println("No such Id exists!");
-				}
-				else {
-					//deletes the employee_logs then personal_info,  then accounts table
-					stmt.executeUpdate("delete from employee_log where Emp_Id=" + inputUserId);
-					stmt.executeUpdate("delete from personal_info where Id=" + inputUserId);
-					stmt.executeUpdate("delete from accounts where ID=" + inputUserId);
-					
-					System.out.println("Delete Successful!");
-				}
+			//double safety
+			if (Integer.parseInt(IdString) != 900000){
+				stmt = con.createStatement();
+				//deletes the employee_logs then personal_info,  then accounts table
+				stmt.executeUpdate("delete from employee_log where Emp_Id=" + IdString);
+				stmt.executeUpdate("delete from personal_info where Id=" + IdString);
+				stmt.executeUpdate("delete from accounts where ID=" + IdString);
+				
+				System.out.println("Delete Successful!");
 			}
 		}
 		catch (Exception e){
