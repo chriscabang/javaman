@@ -122,11 +122,34 @@ Notes:
 	     >>Attempt deleting a non-existant user
                 ER - delete should fail, prompting "No such Id" or
                       the like.
+-----------------------------------------------------------------------------
+      Test the integrated UI and functionalities at your end
+
+
+  -Consider:
+       - Log in as a User and as Admin and test all features.
+       -Note: "Sign Out" should exit the frame
+              "Create User" Create button success or fail would still exit 	       frame (except if naay exceptions)
+              Delete User Cancel button would exit the frame
+             
+        Note: At admin, "Delete Log" won't work yet on initial load of 
+              Record logs, press the "Show All Employees log" and press again
+              to refresh the list of record logs. Bug ni but I'll fix
+              it don't worry hehe.
+
+       Note: the prompts if success ang action e.g. "Sign Out" for now 
+            is prompted at the console window. No UI for that yet. Pero,
+            himo-on nya nko kung ma-dala pa... For now, observe lng sa
+            console window.
+
+        Also note: Code is fragile, no proper error handling is done yet so
+            palihug lng for the mean time input correctly like using 
+            numbers for the ID field and Filling up all fields sa "Create 	    User" to avoid  punishments from java hehe. 
+  
+   In my end, mo-refine nya ko sa code, making it robust and "cleaner".       
 
  	              
-
-Notes: Wla pa ko nag-error handling sa wrong input sa choices
- so medyo fragile ang code nko. Try lng sa ug input sa correct choices to test the following above. Thanks!
+Thanks!
 
 
 Pre-requisites:
