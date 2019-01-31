@@ -1,3 +1,4 @@
 Suggest to allow ENTER key to login. 
 Suggest to close login window when logged in.
 Observed that it is possible to create multiple windows in creatung user, suggest to limit one window in creating users.
+Observed that it is possible to create multiple windows in deleting user, suggest to limit one window in creating users.
