@@ -1,3 +1,3 @@
 Suggest to allow ENTER key to login. 
-Suggest to close login window when logged in (code could summon more admin window)
-Observed one window only for creating user(could summon more window, suggest to bring the window in front)
+Suggest to close login window when logged in.
+Observed that it is possible to create multiple windows in creatung user, suggest to limit one window in creating users.
