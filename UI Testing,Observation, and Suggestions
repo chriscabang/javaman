@@ -6,3 +6,4 @@ Suggest to add confirmation in deleting users.(i.e. Are you sure to delete this 
 Observed that it is possible to different user ID's but with the same name, suggest to deny/forbid creating multiple accounts.
 Observed that it is possible to login multiple times and multiple users in one session, suggest to limit one user per session.
 Suggest to prefer only one label for the logout/signout button (for consistency purposes)
+Suggest to add confirmation in deleting the logs.
