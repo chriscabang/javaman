@@ -4,3 +4,4 @@ Observed that it is possible to create multiple windows in creatung user, sugges
 Observed that it is possible to create multiple windows in deleting user, suggest to limit one window in deleting users.
 Suggest to add confirmation in deleting users.(i.e. Are you sure to delete this user? Y/N)
 Observed that it is possible to different user ID's but with the same name, suggest to deny/forbid creating multiple accounts.
+Observed that it is possible to login multiple times and multiple users in one session, suggest to limit one user per session.
