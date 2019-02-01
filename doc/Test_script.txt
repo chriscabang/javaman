@@ -1,0 +1,162 @@
+Things to test:
+
+disclaimer: wla ko nag Swing UI so expect console ra ni hahaha
+
+Legend:
+  ER - expected result
+  AR - actual result
+
+@ test
+  ideal - ER must be equal to AR
+
+@ Db
+1) Execute scripts in order
+   - project... .sql
+   -Create accounts .. .sql
+     ER - Executes successfull without errors
+
+------------------------------------------------------------------------
+Notes:
+ - ensure that the .java files are all in the same folder
+ - the .jar is needed to connect the java to the java app
+   make sure it is in the same dir as the .java source files
+ - its the LoginTracker.java that contains the main method. Kana lng
+   i-parse. e.g. javac LoginTracker.java
+
+ - to run the app additional parameters are needed: 
+ 
+  full command: java -cp .;C:/Path_of_jar_file LoginTracker
+
+
+--------------------------------------
+@ App
+
+1) Program
+    Action:
+      > Parse LoginTracker.java
+      	ER - Parse successfully without errors
+
+      > Run LoginTracker app with the parameters
+	ER - App launches without errors	
+
+2) LoginTracker
+     Action:
+       > Login app as employee / non-admin with
+         correct credentials
+        ER - Login should be successful
+           - new record log row should be created
+	   - the record logs are displayed
+           - prompt on next action displayed.
+
+       >> Delete a valid record (as employee)
+        ER - record successfully deleted
+           - should reflect in db as well
+           - there should be no errors prompted
+
+      >> Delete a null/invalid record (as employee)
+        ER - no data in db should be affected
+           - there should be a prompt about invalid record 	
+
+      >> Sign out (as employee)
+        ER - user should be signed out successfully
+           - there should be no errors
+           - time out column should be updated
+
+       >> Login with invalid credentials
+         ER - Login should fail
+            - There should be a prompt "Invalid Input"
+            - App should return to login in screen
+
+      > Login app as admin with correct credentials
+        ER - Login should succeed
+          - There should be prompt that admin is logged on
+          - new record log row should be created
+          - admin's record logs should be displayed
+          - no errors encountered
+
+        >> Delete valid record
+           ER - Record should be deleted (reflects in db)
+              - There should be no errors
+        
+        >> Delete invalid record
+          ER  - No changes must happen to db
+              - There should be a prompt regarding invalid 
+                input
+        >> View logged in users
+          ER - Users returned are users that actually logged-in
+              - There should be no errors
+
+        >> Sign out
+           ER - admin signs out successfully
+              -The admin's time log should be successfully 
+                updated
+              - No errors encountered      
+         
+ -----------------------------------------------------------------
+  Update tests:
+       1) Create User (as admin)
+         Action:
+           > Login as admin and choose 5 (create user)
+             ER - Should prompt for credentials for new user
+                - No errors encountered
+
+           >> Create user using an available (untaken) ID
+            ER - User creation should be successful
+               - User's data should reflect in db.
+
+           >> Create user using already used/taken ID
+            ER - User creation must fail prompting taken ID
+
+        2) Delete User (admin)
+           Action:
+	    > Login as admin and choose 6 (delete user)
+             ER - Should prompt for user id to delete
+                - No errors encountered
+
+             >> Attempt deleting the admin (using id: 900000)
+                ER - delete should fail, prompting "Cannot delete admin!"
+
+             >>Attempt deleting a valid user (input an existing Id)
+                ER - delete should succeed, reflecting in db as well
+
+	     >>Attempt deleting a non-existant user
+                ER - delete should fail, prompting "No such Id" or
+                      the like.
+-----------------------------------------------------------------------------
+      Test the integrated UI and functionalities at your end
+
+
+  -Consider:
+       - Log in as a User and as Admin and test all features.
+       -Note: "Sign Out" should exit the frame
+              "Create User" Create button success or fail would still exit 	       frame (except if naay exceptions)
+              Delete User Cancel button would exit the frame
+             
+        Note: At admin, "Delete Log" won't work yet on initial load of 
+              Record logs, press the "Show All Employees log" and press again
+              to refresh the list of record logs. Bug ni but I'll fix
+              it don't worry hehe.
+
+       Note: the prompts if success ang action e.g. "Sign Out" for now 
+            is prompted at the console window. No UI for that yet. Pero,
+            himo-on nya nko kung ma-dala pa... For now, observe lng sa
+            console window.
+
+        Also note: Code is fragile, no proper error handling is done yet so
+            palihug lng for the mean time input correctly like using 
+            numbers for the ID field and Filling up all fields sa "Create 	    User" to avoid  punishments from java hehe. 
+  
+   In my end, mo-refine nya ko sa code, making it robust and "cleaner".       
+
+ 	              
+Thanks!
+
+
+Pre-requisites:
+  - Successful MySQL db installation
+  - jar file at the same folder as the LoginTracker.java
+  - environmental variables for java is set (eg. no errors
+      when executing javac command)
+
+
+ links for mysql found at repository at hyatt-test branch.
