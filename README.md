@@ -1,5 +1,5 @@
 <span align="left">
-<img src="java_option2.jpg" alt="java man with tablet">
+<img src="doc/java_option2.jpg" alt="java man with tablet">
 </span>
 <h1 align="center">JavaMan</h1>
 <div>
